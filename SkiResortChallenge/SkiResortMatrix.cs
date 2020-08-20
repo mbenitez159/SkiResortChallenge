@@ -10,23 +10,30 @@ namespace SkiResortChallenge
     {
         //Square matrix
         public static int Size = 0;
+        public static int[][] Matrix;
+        public static Cell[][] CellMatrix;
 
         public static Cell FindLargestRoute(int[][] matrix)
         {
+            Cell largestPath = new Cell();
             SetMatrixSize(matrix);
-            Cell[][] cellsMatrix = InizializateMatrizCellRoute();
+            Matrix = matrix;
+            CellMatrix = InizializateMatrizCellRoute();
+
 
             for (int i = 0; i < Size; i++)
             {
                 for (int j = 0; j < Size; j++)
                 {
-                    if (!cellsMatrix[i][j].IsLoaded)
+                    if (!CellMatrix[i][j].IsLoaded)
                     {
-                        FindLongestRoute(new Coordinate(i,j), matrix, cellsMatrix);
+                        FindLongestRoute(new Coordinate(i, j), matrix, CellMatrix);
                     }
+                    largestPath = CellMatrix[i][j].Path.Count > largestPath.Path.Count ?
+                        CellMatrix[i][j] : largestPath;
                 }
             }
-            return new Cell();
+            return largestPath;
         }
         private static void SetMatrixSize(int[][] matriz)
         {
@@ -42,13 +49,55 @@ namespace SkiResortChallenge
             }
             return newArray;
         }
-        private static Cell FindLongestRoute(Coordinate coordinate,
-                                            int[][] matriz,
-                                            Cell[][] cellsMatrix)
+        private static Cell FindLongestRoute(Coordinate cdt)
         {
+            //avoid coordinate out of boundaries
+            if (cdt.X < 0 || cdt.X >= Size || cdt.Y < 0 || cdt.Y >= Size)
+                return new Cell();
+
+            if (CellMatrix[cdt.X][cdt.Y].IsLoaded)
+                return CellMatrix[cdt.X][cdt.Y];
+
+            var cellDirections = GetCellsDirections();
+
+            CheckCellAllPosibleDirections(cdt, cellDirections);
+
             return new Cell();
         }
 
+        private static Dictionary<string, Cell> GetCellsDirections()
+        {
+            return new Dictionary<string, Cell>
+            {
+                { "up", new Cell() },
+                { "down", new Cell() },
+                { "left", new Cell() },
+                { "right", new Cell() },
+            };
+        }
+
+        private static void CheckCellAllPosibleDirections(Coordinate cdt, Dictionary<string, Cell> directions)
+        {
+            if (cdt.Y > 0 && (Matrix[cdt.X][cdt.Y] > Matrix[cdt.X][cdt.Y - 1]))
+            {
+                directions["up"] = CellMatrix[cdt.X][cdt.Y] = FindLongestRoute(new Coordinate(cdt.X, cdt.Y - 1));
+            }
+
+            if (cdt.Y <Size- 1 && (Matrix[cdt.X][cdt.Y] > Matrix[cdt.X][cdt.Y + 1]))
+            {
+                directions["down"] = CellMatrix[cdt.X][cdt.Y] = FindLongestRoute(new Coordinate(cdt.X, cdt.Y + 1));
+            }
+
+            if (cdt.X > 0 && (Matrix[cdt.X][cdt.Y] > Matrix[cdt.X - 1][cdt.Y]))
+            {
+                directions["left"] = CellMatrix[cdt.X][cdt.Y] = FindLongestRoute(new Coordinate(cdt.X-1, cdt.Y));
+            }
+
+            if (cdt.X <Size- 1 && (Matrix[cdt.X][cdt.Y] > Matrix[cdt.X + 1][cdt.Y]))
+            {
+                directions["right"] = CellMatrix[cdt.X][cdt.Y] = FindLongestRoute(new Coordinate(cdt.X + 1, cdt.Y));
+            }
+        }
         private static Cell GetBestRoute(Cell cell, int pathDrop)
         {
             return new Cell();
