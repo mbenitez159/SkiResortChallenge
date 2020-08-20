@@ -8,18 +8,31 @@ namespace SkiResortChallenge
 {
     public class SkiResortMatrix
     {
+        //Square matrix
         public static int Size = 0;
 
-        public static Cell FindLargestRoute(int[][] matriz)
+        public static Cell FindLargestRoute(int[][] matrix)
         {
-            return new Cell();
-        }
+            SetMatrixSize(matrix);
+            Cell[][] cellsMatrix = InizializateMatrizCellRoute();
 
-        private static Cell GetBestRoute(Cell cell, int pathDrop)
-        {
+            for (int i = 0; i < Size; i++)
+            {
+                for (int j = 0; j < Size; j++)
+                {
+                    if (!cellsMatrix[i][j].IsLoaded)
+                    {
+                        FindLongestRoute(new Coordinate(i,j), matrix, cellsMatrix);
+                    }
+                }
+            }
             return new Cell();
         }
-        public static Cell[][] InizializateMatrizCellRoute()
+        private static void SetMatrixSize(int[][] matriz)
+        {
+            Size = matriz.GetLength(0);
+        }
+        private static Cell[][] InizializateMatrizCellRoute()
         {
             Cell[][] newArray = new Cell[Size][];
             for (int array1 = 0;
@@ -29,6 +42,18 @@ namespace SkiResortChallenge
             }
             return newArray;
         }
+        private static Cell FindLongestRoute(Coordinate coordinate,
+                                            int[][] matriz,
+                                            Cell[][] cellsMatrix)
+        {
+            return new Cell();
+        }
+
+        private static Cell GetBestRoute(Cell cell, int pathDrop)
+        {
+            return new Cell();
+        }
+
 
     }
 }
