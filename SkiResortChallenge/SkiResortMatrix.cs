@@ -18,17 +18,14 @@ namespace SkiResortChallenge
             Cell largestPath = new Cell();
             SetMatrixSize(matrix);
             Matrix = matrix;
-            CellMatrix = InizializateMatrizCellRoute();
-
-
+            InizializateMatrizCellRoute();
             for (int i = 0; i < Size; i++)
             {
                 for (int j = 0; j < Size; j++)
                 {
                     if (!CellMatrix[i][j].IsLoaded)
-                    {
                         FindLongestRoute(new Coordinate(i, j));
-                    }
+
                     largestPath = CellMatrix[i][j].Path.Count > largestPath.Path.Count ?
                         CellMatrix[i][j] : largestPath;
                 }
@@ -39,7 +36,18 @@ namespace SkiResortChallenge
         {
             Size = matriz.GetLength(0);
         }
-        private static Cell[][] InizializateMatrizCellRoute()
+        private static void InizializateMatrizCellRoute()
+        {
+            CellMatrix = CreateMatrizCellRoute();
+            for (int i = 0; i < Size; i++)
+            {
+                for (int j = 0; j < Size; j++)
+                {
+                    CellMatrix[i][j] = new Cell();
+                }
+            }
+        }
+        private static Cell[][] CreateMatrizCellRoute()
         {
             Cell[][] newArray = new Cell[Size][];
             for (int array1 = 0;
