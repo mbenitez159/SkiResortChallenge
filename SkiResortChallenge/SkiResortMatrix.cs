@@ -8,11 +8,16 @@ namespace SkiResortChallenge
 {
     public class SkiResortMatrix
     {
-        //Square matrix
         public static int Size = 0;
+        // jagged arrays
         public static int[][] Matrix;
         public static Cell[][] CellMatrix;
 
+        public static Cell FindLargestRoute(string filePath)
+        {
+            var matrix = FilePathToIntMatrix(filePath);
+            return FindLargestRoute(matrix);
+        }
         public static Cell FindLargestRoute(int[][] matrix)
         {
             Cell largestPath = new Cell();
@@ -124,6 +129,22 @@ namespace SkiResortChallenge
             return newCell;
         }
 
-
+        #region Helper
+        private static int[][] FilePathToIntMatrix(string filePath)
+        {
+            int size = 0;
+            var FileMatrix = new int[Size][];
+            string[] lines = System.IO.File.ReadAllLines(filePath);
+            for (int i = 0; i < lines.Length; i++)
+            {
+                //0 is dimmension Line
+                if (i == 0)
+                    size = int.Parse(lines[i].Split(' ')?[0]);
+                else
+                    FileMatrix[i-1] = lines[i].Split(' ').Select(l => int.Parse(l)).ToArray();
+            }
+            return FileMatrix;
+        }
+        #endregion
     }
 }
