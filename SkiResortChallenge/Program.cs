@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using SkiResortChallenge.Helper;
+using System;
 namespace SkiResortChallenge
 {
     class Program
@@ -17,10 +13,26 @@ namespace SkiResortChallenge
                 new int[] { 6, 3, 2, 1  },
                 new int[] { 4, 4, 1, 6  },
            };
-            var cell = SkiResortMatrix.FindLargestRoute(skiResortMatriz);
-            Console.WriteLine($"Length of calculated path : {cell.Path.Count}");
-            Console.WriteLine($"Drop of calculated path : {cell.PathDrop}");
-            Console.WriteLine($"Calculated path  {string.Join(" - ", cell.Path)}");
+            var result1 = SkiResortMatrix.FindLargestRoute(skiResortMatriz);
+            Console.WriteLine($"Length of calculated path : {result1.Path.Count}");
+            Console.WriteLine($"Drop of calculated path : {result1.PathDrop}");
+            Console.WriteLine($"Calculated path  {string.Join(" - ", result1.Path)}");
+
+            Console.WriteLine("\n");
+
+            var result2 = SkiResortMatrix.FindLargestRoute(Settings.Matrix_4_4);
+            Console.WriteLine($"Length of calculated path : {result2.Path.Count}");
+            Console.WriteLine($"Drop of calculated path : {result2.PathDrop}");
+            Console.WriteLine($"Calculated path  {string.Join(" - ", result2.Path)}");
+
+
+            Console.WriteLine("\n");
+
+            var result3 = SkiResortMatrix.FindLargestRoute(Settings.Matrix_1000_1000);
+            Console.WriteLine($"Length of calculated path : {result3.Path.Count}");
+            Console.WriteLine($"Drop of calculated path : {result3.PathDrop}");
+            Console.WriteLine($"Calculated path  {string.Join(" - ", result3.Path)}");
+
             Console.ReadLine();
         }
     }

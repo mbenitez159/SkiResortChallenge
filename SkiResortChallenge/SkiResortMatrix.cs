@@ -8,11 +8,16 @@ namespace SkiResortChallenge
 {
     public class SkiResortMatrix
     {
-        //Square matrix
         public static int Size = 0;
+        // jagged arrays
         public static int[][] Matrix;
         public static Cell[][] CellMatrix;
 
+        public static Cell FindLargestRoute(string filePath)
+        {
+            var matrix = FilePathToIntMatrix(filePath);
+            return FindLargestRoute(matrix);
+        }
         public static Cell FindLargestRoute(int[][] matrix)
         {
             Cell largestPath = new Cell();
@@ -25,9 +30,7 @@ namespace SkiResortChallenge
                 {
                     if (!CellMatrix[i][j].IsLoaded)
                         FindLongestRoute(new Coordinate(i, j));
-
-                    largestPath = CellMatrix[i][j].Path.Count > largestPath.Path.Count ?
-                        CellMatrix[i][j] : largestPath;
+                    largestPath = GetSteepestRoutePath(largestPath, CellMatrix[i][j]);
                 }
             }
             return largestPath;
@@ -124,6 +127,55 @@ namespace SkiResortChallenge
             return newCell;
         }
 
+        private static Cell GetSteepestRoutePath(Cell c1, Cell c2)
+        {
+            if (c1.Path.Count == c2.Path.Count)
+                return BrokeCellPathTie(c1, c2);
 
+            return c1.Path.Count > c2.Path.Count ?
+                        c1 : c2;
+        }
+
+        private static Cell BrokeCellPathTie(Cell c1, Cell c2)
+        {
+            Cell steepestCell = c1;
+            for (int i = 0; i < c1.Path.Count - 1; i++)
+            {
+                int c1PathSteep = c1.Path[i] - c1.Path[i + 1];
+                int c2PathSteep = c2.Path[i] - c2.Path[i + 1];
+                if (c1PathSteep != c2PathSteep)
+                {
+                    return c1PathSteep > c2PathSteep ?
+                        c1 : c2;
+                }
+            }
+            return steepestCell;
+        }
+        #region Helper
+        private static int[][] FilePathToIntMatrix(string filePath)
+        {
+            int size = 0;
+            int[][] FileMatrix = new int[size][];
+            string[] lines = GetFileLines(filePath);
+            for (int i = 0; i < lines.Length; i++)
+            {
+                //0 is dimmension Line
+                if (i != 0)
+                {
+                    FileMatrix[i - 1] = lines[i].Split(' ').Select(l => int.Parse(l)).ToArray();
+                }
+                else
+                {
+                    size = int.Parse(lines[i].Split(' ')?[0]);
+                    FileMatrix = new int[size][];
+                }
+            }
+            return FileMatrix;
+        }
+        private static string[] GetFileLines(string filePath)
+        {
+            return System.IO.File.ReadAllLines(filePath);
+        }
+        #endregion
     }
 }
