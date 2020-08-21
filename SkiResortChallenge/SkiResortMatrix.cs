@@ -133,17 +133,26 @@ namespace SkiResortChallenge
         private static int[][] FilePathToIntMatrix(string filePath)
         {
             int size = 0;
-            var FileMatrix = new int[Size][];
-            string[] lines = System.IO.File.ReadAllLines(filePath);
+            int[][] FileMatrix = new int[size][];
+            string[] lines = GetFileLines(filePath);
             for (int i = 0; i < lines.Length; i++)
             {
                 //0 is dimmension Line
-                if (i == 0)
-                    size = int.Parse(lines[i].Split(' ')?[0]);
+                if (i != 0)
+                {
+                    FileMatrix[i - 1] = lines[i].Split(' ').Select(l => int.Parse(l)).ToArray();
+                }
                 else
-                    FileMatrix[i-1] = lines[i].Split(' ').Select(l => int.Parse(l)).ToArray();
+                {
+                    size = int.Parse(lines[i].Split(' ')?[0]);
+                    FileMatrix = new int[size][];
+                }
             }
             return FileMatrix;
+        }
+        private static string[] GetFileLines(string filePath)
+        {
+            return System.IO.File.ReadAllLines(filePath);
         }
         #endregion
     }
