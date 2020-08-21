@@ -6,6 +6,9 @@ namespace SkiResortChallenge
     {
         static void Main(string[] args)
         {
+            /*****IMPORTANT******/
+            /* Change your File Path in app.config */
+
             int[][] skiResortMatriz = new int[][]
            {
                 new int[] { 4, 8, 7, -1  },
