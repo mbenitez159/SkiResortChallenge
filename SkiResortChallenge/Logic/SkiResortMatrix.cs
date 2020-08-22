@@ -10,7 +10,7 @@ namespace SkiResortChallenge
         public static int Size = 0;
         // jagged arrays
         public static int[][] Matrix;
-        public static Cell[][] CellMatrix;
+        public static Cell[][] Cell;
 
         public static Cell FindLargestRoute(string filePath)
         {
@@ -20,33 +20,34 @@ namespace SkiResortChallenge
         public static Cell FindLargestRoute(int[][] matrix)
         {
             Cell largestPath = new Cell();
-            SetMatrixSize(matrix);
-            Matrix = matrix;
-            InizializateMatrizCellRoute();
+            InitializateMatrix(matrix);
             for (int i = 0; i < Size; i++)
             {
                 for (int j = 0; j < Size; j++)
                 {
-                    if (!CellMatrix[i][j].IsLoaded)
+                    if (!Cell[i][j].IsLoaded)
                         FindLongestRoute(new Coordinate(i, j));
-                    largestPath = largestPath > CellMatrix[i][j] ?
-                        largestPath : CellMatrix[i][j];
+
+                    largestPath = largestPath > Cell[i][j] ?
+                        largestPath : Cell[i][j];
                 }
             }
             return largestPath;
         }
-        private static void SetMatrixSize(int[][] matriz)
+        private static void InitializateMatrix(int[][] matrix)
         {
-            Size = matriz.GetLength(0);
+            Matrix = matrix;
+            Size = Matrix.GetLength(0);
+            InizializateMatrizCellRoute();
         }
         private static void InizializateMatrizCellRoute()
         {
-            CellMatrix = CreateMatrizCellRoute();
+            Cell = CreateMatrizCellRoute();
             for (int i = 0; i < Size; i++)
             {
                 for (int j = 0; j < Size; j++)
                 {
-                    CellMatrix[i][j] = new Cell();
+                    Cell[i][j] = new Cell();
                 }
             }
         }
@@ -66,16 +67,16 @@ namespace SkiResortChallenge
             if (cdt.X < 0 || cdt.X >= Size || cdt.Y < 0 || cdt.Y >= Size)
                 return new Cell();
 
-            if (CellMatrix[cdt.X][cdt.Y].IsLoaded)
-                return CellMatrix[cdt.X][cdt.Y];
+            if (Cell[cdt.X][cdt.Y].IsLoaded)
+                return Cell[cdt.X][cdt.Y];
 
             var cellDirections = GetCellsDirections();
 
             CheckCellAllPosibleDirections(cdt, cellDirections);
 
-            CellMatrix[cdt.X][cdt.Y] = GetBestRoute(cellDirections, Matrix[cdt.X][cdt.Y]);
+            Cell[cdt.X][cdt.Y] = GetBestRoute(cellDirections, Matrix[cdt.X][cdt.Y]);
 
-            return CellMatrix[cdt.X][cdt.Y];
+            return Cell[cdt.X][cdt.Y];
         }
 
         private static Dictionary<string, Cell> GetCellsDirections()
@@ -92,24 +93,16 @@ namespace SkiResortChallenge
         private static void CheckCellAllPosibleDirections(Coordinate cdt, Dictionary<string, Cell> directions)
         {
             if (cdt.Y > 0 && (Matrix[cdt.X][cdt.Y] > Matrix[cdt.X][cdt.Y - 1]))
-            {
-                directions["up"] = CellMatrix[cdt.X][cdt.Y] = FindLongestRoute(new Coordinate(cdt.X, cdt.Y - 1));
-            }
+                directions["up"] = FindLongestRoute(new Coordinate(cdt.X, cdt.Y - 1));
 
-            if (cdt.Y < Size - 1 && (Matrix[cdt.X][cdt.Y] > Matrix[cdt.X][cdt.Y + 1]))
-            {
-                directions["down"] = CellMatrix[cdt.X][cdt.Y] = FindLongestRoute(new Coordinate(cdt.X, cdt.Y + 1));
-            }
+            if (cdt.Y < (Size - 1) && (Matrix[cdt.X][cdt.Y] > Matrix[cdt.X][cdt.Y + 1]))
+                directions["down"] = FindLongestRoute(new Coordinate(cdt.X, cdt.Y + 1));
 
             if (cdt.X > 0 && (Matrix[cdt.X][cdt.Y] > Matrix[cdt.X - 1][cdt.Y]))
-            {
-                directions["left"] = CellMatrix[cdt.X][cdt.Y] = FindLongestRoute(new Coordinate(cdt.X - 1, cdt.Y));
-            }
+                directions["left"] = FindLongestRoute(new Coordinate(cdt.X - 1, cdt.Y));
 
-            if (cdt.X < Size - 1 && (Matrix[cdt.X][cdt.Y] > Matrix[cdt.X + 1][cdt.Y]))
-            {
-                directions["right"] = CellMatrix[cdt.X][cdt.Y] = FindLongestRoute(new Coordinate(cdt.X + 1, cdt.Y));
-            }
+            if (cdt.X < (Size - 1) && (Matrix[cdt.X][cdt.Y] > Matrix[cdt.X + 1][cdt.Y]))
+                directions["right"] = FindLongestRoute(new Coordinate(cdt.X + 1, cdt.Y));
         }
 
         private static Cell GetBestRoute(Dictionary<string, Cell> directions, int pathDrop)
@@ -130,21 +123,15 @@ namespace SkiResortChallenge
         #region Helper
         private static int[][] FilePathToIntMatrix(string filePath)
         {
-            int size = 0;
-            int[][] FileMatrix = new int[size][];
+            int[][] FileMatrix = new int[0][];
             string[] lines = GetFileLines(filePath);
             for (int i = 0; i < lines.Length; i++)
             {
-                //0 is dimmension Line
-                if (i != 0)
-                {
-                    FileMatrix[i - 1] = lines[i].Split(' ').Select(l => int.Parse(l)).ToArray();
-                }
+                //If Line is 0 => the dimmension Line
+                if (i > 0)
+                    FileMatrix[i - 1] = GetNumbersFromLine(lines[i]);
                 else
-                {
-                    size = int.Parse(lines[i].Split(' ')?[0]);
-                    FileMatrix = new int[size][];
-                }
+                    FileMatrix = InitializateMatrixFromLineSize(lines[0]);
             }
             return FileMatrix;
         }
@@ -152,8 +139,25 @@ namespace SkiResortChallenge
         {
             if (!File.Exists(filePath))
                 throw new Exception("Please provide a valid file path");
-            return System.IO.File.ReadAllLines(filePath);
+            return File.ReadAllLines(filePath);
         }
+        private static int[] GetNumbersFromLine(string line)
+        {
+            return line.Split(' ')
+                    .Select(l => int.Parse(l))
+                    .ToArray();
+        }
+
+        private static int[][] InitializateMatrixFromLineSize(string line)
+        {
+            int size = GetSize(line);
+            return new int[size][];
+        }
+        private static int GetSize(string line)
+        {
+            return int.Parse(line.Split(' ')?[0]);
+        }
+
         #endregion
     }
 }
