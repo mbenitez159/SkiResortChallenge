@@ -28,10 +28,9 @@ namespace SkiResortChallenge
         {
             return c1.CompareTo(c2) == -1;
         }
-        public int CompareTo(Cell obj)
+        public int CompareTo(Cell cell)
         {
-            if (obj is null) return 1;
-            var cell = obj as Cell;
+            if (cell is null) return 1;
             if (this.Path.Count == cell.Path.Count)
                 return BrokeCellPathTie(this, cell);
 
@@ -39,7 +38,6 @@ namespace SkiResortChallenge
         }
         private int BrokeCellPathTie(Cell c1, Cell c2)
         {
-            int steepestCell = 1;
             for (int i = 0; i < c1.Path.Count - 1; i++)
             {
                 int c1PathSteep = c1.Path[i] - c1.Path[i + 1];
@@ -49,7 +47,7 @@ namespace SkiResortChallenge
                     return c1PathSteep.CompareTo(c2PathSteep);
                 }
             }
-            return steepestCell;
+            return 1;
         }
     }
 }
